@@ -83,14 +83,65 @@
             color:#999;
             cursor:pointer;
         }
+
+        div.menuBar,
+        div.menuBar a.menuButton {
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            font-size: 8pt;
+            font-style: normal;
+            font-weight: normal;
+            color: #000000;
+        }
+
+        div.menuBar {
+            background-color: #d0d0d0;
+            border: 2px solid;
+            border-color: #f0f0f0 #909090 #909090 #f0f0f0;
+            padding: 4px 2px 4px 2px;
+            text-align: left;
+        }
+
+        div.menuBar a.menuButton {
+            background-color: transparent;
+            border: 1px solid #d0d0d0;
+            color: #000000;
+            cursor: default;
+            left: 0px;
+            margin: 1px;
+            padding: 2px 6px 2px 6px;
+            position: relative;
+            text-decoration: none;
+            top: 0px;
+            z-index: 100;
+        }
+
+        div.menuBar a.menuButton:hover {
+            background-color: transparent;
+            border-color: #f0f0f0 #909090 #909090 #f0f0f0;
+            color: #000000;
+        }
+
+        div.menuBar a.menuButtonActive,
+        div.menuBar a.menuButtonActive:hover {
+            background-color: #a0a0a0;
+            border-color: #909090 #f0f0f0 #f0f0f0 #909090;
+            color: #ffffff;
+            left: 1px;
+            top: 1px;
+        }
     </style>
 </head>
 <body>
-
+<div class="menuBar">
+    <a class="menuButton menuButtonActive" href="#" >Datei</a>
+    <a class="menuButton" href="#">Bearbeiten</a>
+    <a class="menuButton" href="#">Fenster</a>
+    <a class="menuButton" href="#" >Hilfe</a>
+</div>
 <div id="context">
     <ul>
         <li id="edit">Bearbeiten</li>
-        <li id="edit">Link</li>
+        <li id="link">Link</li>
         <li id="delete">Löschen</li>
     </ul>
 </div>
