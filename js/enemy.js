@@ -14,8 +14,8 @@
         var data = {
             images: [image],
             frames: {
-                width:21,
-                height:40
+                width:16,
+                height:30
             },
             animations: {
                 runRight: {

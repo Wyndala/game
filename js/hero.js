@@ -31,7 +31,17 @@
                     speed: 0.2
                 },
                 standRight: [2],
-                standLeft: [1]
+                standLeft: [1],
+                crouchRight: [9],
+                crouchLeft: [8],
+                dead: {
+                    frames: [10, 13],
+                    speed: 0.2
+                },
+                rotate: {
+                    frames: [8, 2 , 9, 1],
+                    speed: 0.4
+                }
             }
         };
         var spriteSheet = new createjs.SpriteSheet(data);
@@ -134,14 +144,28 @@
         }
     }
 
+    Hero.prototype.crouch = function() {
+        if (this.currentAnimation == 'jumpRight' ||
+            this.currentAnimation == 'standRight' ||
+                this.currentAnimation == 'runRight'
+            ) {
+            this.playAnimation('rotate');
+        }
+        if (this.currentAnimation == 'jumpLeft' ||
+            this.currentAnimation == 'standLeft' ||
+                this.currentAnimation == 'runLeft'
+            ) {
+            this.playAnimation('rotate');
+        }
+    }
+
     Hero.prototype.playAnimation = function(animation) {
         this.oldAnimation = this.currentAnimation;
         this.gotoAndPlay(animation);
     }
 
     Hero.prototype.kill = function () {
-        this.gotoAndStop('standRight');
-        hero.rotation = 180;
+        this.gotoAndPlay('dead');
         if (this.instance == null) {
             this.instance = createjs.Sound.play('die');
             backgroundInstance.stop();
@@ -154,7 +178,7 @@
         life--;
         hud.update();
         this.velocity.x = 0;
-        this.velocity.y = 10;
+        this.velocity.y = -20;
         this.killed = true;
     }
 

@@ -23,18 +23,23 @@ if ('ontouchstart' in document.documentElement) {
             case 38:
                 hero.jump();
                 break;
-
+            case 40:
+                hero.crouch();
+                break;
         };
     });
     document.addEvent('keyup', function(event) {
         switch(event.code) {
             case 37:
                 hero.velocity.x = 0;
-                hero.gotoAndPlay('standLeft');
+                hero.playAnimation('standLeft');
                 break;
             case 39:
                 hero.velocity.x = 0;
-                hero.gotoAndPlay('standRight');
+                hero.playAnimation('standRight');
+                break;
+            case 40:
+                hero.playAnimation(hero.oldAnimation);
                 break;
         };
     });
@@ -99,7 +104,7 @@ function onImageLoaded() {
 
     var jsonRequest = new Request.JSON({url: 'levels/level0.json',
         onSuccess: function(responseJSON){
-            loadLevel(responseJSON);
+            //loadLevel(responseJSON);
             stage.addChild(hero);
             hud = new Hud();
 
@@ -115,7 +120,7 @@ function onImageLoaded() {
             console.log('fail');
         }
     }).send();
-    /*
+
     var l = 225;
     var atX=0;
     var atY = 300;
@@ -129,7 +134,7 @@ function onImageLoaded() {
         atY = atY + Math.random() * 400 - 100;
         // add the platform
         addPlatform(atX,atY);
-    }*/
+    }
     createjs.Ticker.setFPS(30);
     createjs.Ticker.addEventListener('tick', tick);
 
@@ -162,7 +167,7 @@ function addPlatform(x,y) {
 
     stage.addChild(platform);
     window.collideables.push(platform);
-    /*'addCoin(x+75, y - 28);
+    addCoin(x+75, y - 28);
     addCoin(x+150, y - 28);
 
     addBox(x+ 100, y - 100);
@@ -171,7 +176,7 @@ function addPlatform(x,y) {
     //if (enemyCount) {
         addEnemy(x+100,y - 30, platform);
         enemyCount--;
-    //}*/
+    //}
 
 }
 
@@ -192,7 +197,7 @@ function addEnemy(x,y, platform) {
     x = Math.round(x);
     y = Math.round(y);
 
-    var test = new Enemy('assets/turtleSprite.png', platform);
+    var test = new Enemy('assets/AndroidSprite.png', platform);
     test.x = x;
     test.y = y;
     test.snapToPixel = true;
@@ -274,6 +279,7 @@ function reset() {
     hero.x = 0;
     stage.x = 0;
     hero.velocity.y = 12;
+    hero.playAnimation('standRight');
 }
 
 document.addEvent('domready', function() {
