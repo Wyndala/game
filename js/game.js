@@ -48,6 +48,10 @@ if ('ontouchstart' in document.documentElement) {
 var	stage,
     canvas,
     hero,
+    start = {
+        x: 0,
+        y: 0
+    }
     w = getWidth(),
     h = getHeight(),
     GRID_HORIZONTAL = 8,
@@ -99,18 +103,19 @@ function onImageLoaded() {
     var h = getHeight();
 
     hero = new Hero();
-    hero.x = 0
-    hero.y = 0;
+    hero.x = start.x;
+    hero.y = start.y;
 
     var jsonRequest = new Request.JSON({url: 'levels/level0.json',
         onSuccess: function(responseJSON){
-            //loadLevel(responseJSON);
+            loadLevel(responseJSON);
             stage.addChild(hero);
             hud = new Hud();
 
             hud.x = 0;
             hud.y = 0;
-
+            hero.x = start.x;
+            hero.y = start.y;
             stage.addChild(hud);
         },
         onError: function(erro) {
@@ -121,7 +126,7 @@ function onImageLoaded() {
         }
     }).send();
 
-    var l = 225;
+    /*var l = 225;
     var atX=0;
     var atY = 300;
     //background = createBgGrid(GRID_HORIZONTAL,GRID_VERTICAL);
@@ -134,7 +139,7 @@ function onImageLoaded() {
         atY = atY + Math.random() * 400 - 100;
         // add the platform
         addPlatform(atX,atY);
-    }
+    }*/
     createjs.Ticker.setFPS(30);
     createjs.Ticker.addEventListener('tick', tick);
 
@@ -153,7 +158,13 @@ function executeFunctionByName(name) {
         case 'platform': return addPlatform;
         case 'coin': return addCoin;
         case 'box': return addBox;
+        case 'start': return setStartPosition;
     }
+}
+
+function setStartPosition(x,y) {
+    start.x = x;
+    start.y = y - 40;
 }
 
 function addPlatform(x,y) {
@@ -167,7 +178,7 @@ function addPlatform(x,y) {
 
     stage.addChild(platform);
     window.collideables.push(platform);
-    addCoin(x+75, y - 28);
+    /*addCoin(x+75, y - 28);
     addCoin(x+150, y - 28);
 
     addBox(x+ 100, y - 100);
@@ -176,7 +187,7 @@ function addPlatform(x,y) {
     //if (enemyCount) {
         addEnemy(x+100,y - 30, platform);
         enemyCount--;
-    //}
+    //}*/
 
 }
 
@@ -274,9 +285,9 @@ function handleKeyDown(e)
 
 function reset() {
     hero.rotation = 0;
-    hero.y = 0;
+    hero.y = start.y;
     hero.killed = false;
-    hero.x = 0;
+    hero.x = start.x;
     stage.x = 0;
     hero.velocity.y = 12;
     hero.playAnimation('standRight');

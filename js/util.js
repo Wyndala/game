@@ -210,3 +210,9 @@ Array.prototype.remove = function(from, to) {
     this.length = from < 0 ? this.length + from : from;
     return this.push.apply(this, rest);
 };
+
+function performClick(node) {
+    var evt = document.createEvent("MouseEvents");
+    evt.initEvent("click", true, false);
+    node.dispatchEvent(evt);
+}

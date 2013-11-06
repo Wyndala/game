@@ -24,11 +24,11 @@
                 jumpLeft:[4],
                 runRight: {
                     frames: [2, 3],
-                    speed: 0.2
+                    speed: 0.3
                 },
                 runLeft: {
                     frames: [1, 0],
-                    speed: 0.2
+                    speed: 0.3
                 },
                 standRight: [2],
                 standLeft: [1],

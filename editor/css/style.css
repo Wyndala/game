@@ -1,0 +1,215 @@
+* {
+    padding: 0px;
+    border: 0px;
+    margin: 0px;
+}
+
+.save {
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+}
+
+body {
+    height: 100%;
+    overflow: hidden;
+}
+html {
+    height: 100%;
+    overflow: hidden;
+}
+
+#context {
+    border:1px solid #666;
+    background-color:#eee;
+    min-width:150px;
+    position: absolute;
+    left: -500px;
+}
+
+#context ul {
+    list-style:none;
+    padding:0;
+    margin:0;
+    cursor:pointer;
+}
+
+#context ul li {
+    text-align:left;
+    padding:3px 10px 3px 5px;
+    margin:0;
+    cursor:pointer;
+    font-family:"Lucida Grande",Verdana;
+    text-decoration:none;
+    color:#333;
+    font-size:12px;
+    font-weight:bold;
+    border-top:1px solid #fff;
+    border-left:1px solid #fff;
+    border-bottom:1px solid #999;
+    border-right:1px solid #999;
+}
+
+#context ul li.selected,
+#context ul li:hover {
+    color:#fff;
+    background-color:#3875d7;
+    cursor:pointer;
+}
+
+#context ul li.selected:hover {
+    color:#333;
+    background-color:#eee;
+    cursor:pointer;
+}
+
+#context ul li.disabled,
+#context ul li:hover.disabled {
+    background-color: #eee;
+    color:#999;
+    cursor:pointer;
+}
+
+input[type=file] {
+    position:fixed;
+    top:-1000px;
+}
+
+/* Root = Horizontal, Secondary = Vertical */
+ul#navmenu {
+    margin: 0;
+    border: 0 none;
+    padding: 0;
+    width: 500px; /*For KHTML*/
+    list-style: none;
+    height: 24px;
+    position: absolute;
+    top: 0px;
+}
+
+ul#navmenu li {
+    margin: 0;
+    border: 0 none;
+    padding: 0;
+    float: left; /*For Gecko*/
+    display: inline;
+    list-style: none;
+    position: relative;
+    height: 24px;
+}
+
+ul#navmenu ul {
+    margin: 0;
+    border: 0 none;
+    padding: 0;
+    width: 160px;
+    list-style: none;
+    display: none;
+    position: absolute;
+    top: 24px;
+    left: 0;
+}
+
+ul#navmenu ul li {
+    float: none; /*For Gecko*/
+    display: block !important;
+    display: inline; /*For IE*/
+}
+
+/* Root Menu */
+ul#navmenu a {
+    border: 1px solid #FFF;
+    border-right-color: #CCC;
+    border-bottom-color: #CCC;
+    padding: 0 6px;
+    float: none !important; /*For Opera*/
+    float: left; /*For IE*/
+    display: block;
+    background: #EEE;
+    color: #666;
+    font: bold 10px/22px Verdana, Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    height: auto !important;
+    height: 100%; /*For IE*/
+}
+
+/* Root Menu Hover Persistence */
+ul#navmenu a:hover,
+ul#navmenu li:hover a,
+ul#navmenu li.iehover a {
+    background: #CCC;
+    color: #FFF;
+}
+
+/* 2nd Menu */
+ul#navmenu li:hover li a,
+ul#navmenu li.iehover li a {
+    float: none;
+    background: #EEE;
+    color: #666;
+}
+
+/* 2nd Menu Hover Persistence */
+ul#navmenu li:hover li a:hover,
+ul#navmenu li:hover li:hover a,
+ul#navmenu li.iehover li a:hover,
+ul#navmenu li.iehover li.iehover a {
+    background: #CCC;
+    color: #FFF;
+}
+
+/* 3rd Menu */
+ul#navmenu li:hover li:hover li a,
+ul#navmenu li.iehover li.iehover li a {
+    background: #EEE;
+    color: #666;
+}
+
+/* 3rd Menu Hover Persistence */
+ul#navmenu li:hover li:hover li a:hover,
+ul#navmenu li:hover li:hover li:hover a,
+ul#navmenu li.iehover li.iehover li a:hover,
+ul#navmenu li.iehover li.iehover li.iehover a {
+    background: #CCC;
+    color: #FFF;
+}
+
+/* 4th Menu */
+ul#navmenu li:hover li:hover li:hover li a,
+ul#navmenu li.iehover li.iehover li.iehover li a {
+    background: #EEE;
+    color: #666;
+}
+
+/* 4th Menu Hover */
+ul#navmenu li:hover li:hover li:hover li a:hover,
+ul#navmenu li.iehover li.iehover li.iehover li a:hover {
+    background: #CCC;
+    color: #FFF;
+}
+
+ul#navmenu ul ul,
+ul#navmenu ul ul ul {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 160px;
+}
+
+/* Do Not Move - Must Come Before display:block for Gecko */
+ul#navmenu li:hover ul ul,
+ul#navmenu li:hover ul ul ul,
+ul#navmenu li.iehover ul ul,
+ul#navmenu li.iehover ul ul ul {
+    display: none;
+}
+
+ul#navmenu li:hover ul,
+ul#navmenu ul li:hover ul,
+ul#navmenu ul ul li:hover ul,
+ul#navmenu li.iehover ul,
+ul#navmenu ul li.iehover ul,
+ul#navmenu ul ul li.iehover ul {
+    display: block;
+}

@@ -29,7 +29,7 @@ function init() {
             actElement.x = correctedX - (correctedX % gridModulo);
             actElement.y = correctedY - (correctedY % gridModulo);
         } else {
-            if (event.rawX < 40) {
+            /*if (event.rawX < 40) {
                 moveStage({x: 10, y: 0});
             } else if (event.rawX > window.getSize().x - 40) {
                 moveStage({x: -10, y: 0});
@@ -39,15 +39,35 @@ function init() {
                 moveStage({x: 0, y: 10});
             } else if (event.rawY > window.getSize().y - 40) {
                 moveStage({x: 0, y: -10});
-            }
+            }*/
         }
     });
-    /*
-    stage.on('click', function(event) {
-        if(!event.target.name) {
-            resetContext();
-        }
-    });*/
+
+    $('menu_load').addEvent('click', function(event) {
+        event.stop();
+        performClick($('load'));
+
+
+
+    });
+
+    $('load').addEvent('change', function(evt) {
+            var files = evt.target.files; // FileList object
+
+            for (var i = 0, f; f = files[i]; i++) {
+                var reader = new FileReader();
+
+                reader.onload = (function(file) {
+                    return function(e) {
+                        var jsonContent = JSON.decode(e.target.result);
+                        loadLevel(jsonContent);
+                    };
+                })(f);
+
+                reader.readAsBinaryString(f);
+            }
+
+    })
 
     stage.on('stagemouseup', function(event) {
         if (actElement) {
@@ -70,6 +90,22 @@ function init() {
     createjs.Ticker.addEventListener('tick', tick);
 }
 
+function loadLevel(json) {
+    Object.each(json, function(item, index) {
+        var addFunction = executeFunctionByName(item.name);
+        addFunction(item.x, item.y);
+    });
+}
+
+function executeFunctionByName(name) {
+    switch (name) {
+        case 'platform': return addPlatform;
+        case 'coin': return addCoin;
+        case 'box': return addBox;
+        case 'start': return addStart;
+    }
+}
+
 function addPlatform(x,y) {
     x = Math.round(x);
     y = Math.round(y);
@@ -81,10 +117,11 @@ function addPlatform(x,y) {
     platform.name = 'platform';
 
     stage.addChild(platform);
+/*
     if (actElement != null) {
         stage.removeChild(actElement);
     }
-    actElement = platform;
+    actElement = platform;*/
 }
 
 function addCoin(x,y) {
@@ -98,10 +135,11 @@ function addCoin(x,y) {
     coin.name = 'coin';
 
     stage.addChild(coin);
+    /*
     if (actElement != null) {
         stage.removeChild(actElement);
     }
-    actElement = coin;
+    actElement = coin;*/
 }
 
 function addEnemy(x,y, platform) {
@@ -133,10 +171,11 @@ function addBox(x,y) {
     box.name = 'box';
 
     stage.addChild(box);
+    /*
     if (actElement != null) {
         stage.removeChild(actElement);
     }
-    actElement = box;
+    actElement = box;*/
 }
 
 function addStart(x,y) {

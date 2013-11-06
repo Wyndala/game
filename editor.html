@@ -6,141 +6,44 @@
     <script src="createjs.min.js" type="text/javascript"></script>
     <script src="mootools-core-1.4.5.js" type="text/javascript"></script>
     <script src="mootools-more-1.4.0.1.js" type="text/javascript"></script>
+    <script src="js/util.js" type="text/javascript"></script>
     <script src="js/collectable.js" type="text/javascript"></script>
     <script src="js/interactors.js" type="text/javascript"></script>
     <script src="js/enemy.js" type="text/javascript"></script>
     <script src="editor/editor.js" type="text/javascript"></script>
-    <style type="text/css">
-        * {
-            padding: 0px;
-            border: 0px;
-            margin: 0px;
-        }
-
-        .save {
-            position: absolute;
-            z-index: 1000;
-            top: 0;
-            left: 0;
-        }
-
-        body {
-            height: 100%;
-            overflow: hidden;
-        }
-        html {
-            height: 100%;
-            overflow: hidden;
-        }
-
-        #context {
-            border:1px solid #666;
-            background-color:#eee;
-            min-width:150px;
-            position: absolute;
-            left: -500px;
-        }
-
-        #context ul {
-            list-style:none;
-            padding:0;
-            margin:0;
-            cursor:pointer;
-        }
-
-        #context ul li {
-            text-align:left;
-            padding:3px 10px 3px 5px;
-            margin:0;
-            cursor:pointer;
-            font-family:"Lucida Grande",Verdana;
-            text-decoration:none;
-            color:#333;
-            font-size:12px;
-            font-weight:bold;
-            border-top:1px solid #fff;
-            border-left:1px solid #fff;
-            border-bottom:1px solid #999;
-            border-right:1px solid #999;
-        }
-
-        #context ul li.selected,
-        #context ul li:hover {
-            color:#fff;
-            background-color:#3875d7;
-            cursor:pointer;
-        }
-
-        #context ul li.selected:hover {
-            color:#333;
-            background-color:#eee;
-            cursor:pointer;
-        }
-
-        #context ul li.disabled,
-        #context ul li:hover.disabled {
-            background-color: #eee;
-            color:#999;
-            cursor:pointer;
-        }
-
-        div.menuBar,
-        div.menuBar a.menuButton {
-            font-family: "MS Sans Serif", Arial, sans-serif;
-            font-size: 8pt;
-            font-style: normal;
-            font-weight: normal;
-            color: #000000;
-        }
-
-        div.menuBar {
-            background-color: #d0d0d0;
-            border: 2px solid;
-            border-color: #f0f0f0 #909090 #909090 #f0f0f0;
-            padding: 4px 2px 4px 2px;
-            text-align: left;
-            position: absolute;
-            top: 0px;
-            z-index: 1000;
-        }
-
-        div.menuBar a.menuButton {
-            background-color: transparent;
-            border: 1px solid #d0d0d0;
-            color: #000000;
-            cursor: default;
-            left: 0px;
-            margin: 1px;
-            padding: 2px 6px 2px 6px;
-            position: relative;
-            text-decoration: none;
-            top: 0px;
-            z-index: 100;
-        }
-
-        div.menuBar a.menuButton:hover {
-            background-color: transparent;
-            border-color: #f0f0f0 #909090 #909090 #f0f0f0;
-            color: #000000;
-        }
-
-        div.menuBar a.menuButtonActive,
-        div.menuBar a.menuButtonActive:hover {
-            background-color: #a0a0a0;
-            border-color: #909090 #f0f0f0 #f0f0f0 #909090;
-            color: #ffffff;
-            left: 1px;
-            top: 1px;
-        }
-    </style>
+    <link rel="stylesheet" media="screen" href="editor/css/style.css">
 </head>
 <body>
-<div class="menuBar">
-    <a class="menuButton menuButtonActive" href="#" >Datei</a>
-    <a class="menuButton" href="#">Bearbeiten</a>
-    <a class="menuButton" href="#">Fenster</a>
-    <a class="menuButton" href="#" >Hilfe</a>
-</div>
+<ul id="navmenu">
+    <li>
+        <a href="#">Datei</a>
+        <ul>
+            <li><a href="#">Neu</a></li>
+            <li>
+                <a href="#" id="menu_load">Laden</a>
+                <input type="file" id="load" />
+            </li>
+            <li><a href="#">Speichern</a></li>
+        </ul>
+    </li>
+
+    <li><a href="#">Bearbeiten</a>
+        <ul>
+            <li><a href="#">Websites +</a></li>
+            <li><a href="#">Pen and Ink</a></li>
+            <li><a href="#">Free Interfaces</a></li>
+        </ul>
+    </li>
+
+    <li><a href="#">Fenster</a>
+        <ul>
+            <li><a href="#">Fireworks +</a></li>
+            <li><a href="#">CSS +</a></li>
+        </ul>
+    </li>
+    <li><a href="#">Hilfe</a></li>
+
+</ul>
 <div id="context">
     <ul>
         <li id="edit">Bearbeiten</li>
