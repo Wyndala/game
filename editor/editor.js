@@ -94,6 +94,9 @@ function loadLevel(json) {
     Object.each(json, function(item, index) {
         var addFunction = executeFunctionByName(item.name);
         addFunction(item.x, item.y);
+        if (actElement) {
+            addElement();
+        }
     });
 }
 
@@ -117,11 +120,11 @@ function addPlatform(x,y) {
     platform.name = 'platform';
 
     stage.addChild(platform);
-/*
+
     if (actElement != null) {
         stage.removeChild(actElement);
     }
-    actElement = platform;*/
+    actElement = platform;
 }
 
 function addCoin(x,y) {
@@ -135,11 +138,11 @@ function addCoin(x,y) {
     coin.name = 'coin';
 
     stage.addChild(coin);
-    /*
+
     if (actElement != null) {
         stage.removeChild(actElement);
     }
-    actElement = coin;*/
+    actElement = coin;
 }
 
 function addEnemy(x,y, platform) {
@@ -171,11 +174,11 @@ function addBox(x,y) {
     box.name = 'box';
 
     stage.addChild(box);
-    /*
+
     if (actElement != null) {
         stage.removeChild(actElement);
     }
-    actElement = box;*/
+    actElement = box;
 }
 
 function addStart(x,y) {
