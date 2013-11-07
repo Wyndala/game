@@ -43,12 +43,26 @@ function init() {
         }
     });
 
+    $('menu_new').addEvent('click', function(event) {
+        elementIterator = 0;
+        editorJSON = {
+
+        };
+        stage.removeAllChildren();
+        var gridCount = getWidth() / 10;
+        grid = createBgGrid(gridCount, gridCount);
+        stage.addChild(grid);
+
+    });
+
+    $('menu_save').addEvent('click', function(event) {
+        save(this);
+
+    });
+
     $('menu_load').addEvent('click', function(event) {
         event.stop();
         performClick($('load'));
-
-
-
     });
 
     $('load').addEvent('change', function(evt) {
@@ -98,6 +112,15 @@ function loadLevel(json) {
             addElement();
         }
     });
+}
+
+function save(thisContext) {
+    var data = editorJSON;
+    var json = JSON.stringify(data);
+    var blob = new Blob([json], {type: "application/json"});
+    var url  = URL.createObjectURL(blob);
+    thisContext.download    = "level.json";
+    thisContext.set('href',url);
 }
 
 function executeFunctionByName(name) {
@@ -383,9 +406,6 @@ document.addEvent('keydown', function(event) {
         case 77:
             addStart(0,0);
             break;
-        case 83:
-            saveJSON();
-            break;
         case 37:
             moveStage({x: 20, y: 0});
             break;
@@ -415,6 +435,10 @@ var myKeyboardEvents = new Keyboard({
     events: {
         'ctrl+z': function() {
             undo();
+        },
+        'ctrl+s': function(event) {
+            console.log(event);
+            save();
         }
     },
     active: true
