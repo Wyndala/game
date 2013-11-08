@@ -11,9 +11,13 @@ var	stage,
 
     },
     markerShape = null,
-    lastElementTime = 0
+    lastElementTime = 0,
+    toolBox = null;
 
 function init() {
+    toolBox = new Window();
+
+
     canvas = document.createElement('canvas');
     canvas.width = getWidth();
     canvas.height = getHeight();

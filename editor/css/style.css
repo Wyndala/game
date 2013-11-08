@@ -212,3 +212,49 @@ ul#navmenu ul li.iehover ul,
 ul#navmenu ul ul li.iehover ul {
     display: block;
 }
+
+
+.window {
+    background: #eee;
+    border-top:1px solid #fff;
+    border-left:1px solid #fff;
+    border-bottom:1px solid #999;
+    border-right:1px solid #999;
+    position: absolute;
+    right: 100px;
+    top: 50px;
+    width: 300px;
+    height: 500px;
+}
+
+.window .title {
+    background: #444;
+    color: #fff;
+    padding: 5px;
+    position: relative;
+}
+
+.window .title .window-buttons {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    padding: 0px;
+    height: 20px;
+}
+
+.window .title .button {
+    background: #eee;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-bottom: 1px solid #999;
+    border-right: 1px solid #999;
+    color: #444;
+    font-size: 12px;
+    width: 15px;
+    display: inline-block;
+    text-align: center;
+}
+
+.window ul {
+    list-style: none;
+}
