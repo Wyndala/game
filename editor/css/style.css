@@ -81,9 +81,7 @@ ul#navmenu {
     margin: 0;
     border: 0 none;
     padding: 0;
-    width: 500px; /*For KHTML*/
     list-style: none;
-    height: 24px;
     position: absolute;
     top: 0px;
 }
@@ -96,7 +94,9 @@ ul#navmenu li {
     display: inline;
     list-style: none;
     position: relative;
-    height: 24px;
+    font-size:12px;
+    font-weight:bold;
+    font-family:"Lucida Grande",Verdana;
 }
 
 ul#navmenu ul {
@@ -107,7 +107,7 @@ ul#navmenu ul {
     list-style: none;
     display: none;
     position: absolute;
-    top: 24px;
+    top: 20px;
     left: 0;
 }
 
@@ -122,13 +122,12 @@ ul#navmenu a {
     border: 1px solid #FFF;
     border-right-color: #CCC;
     border-bottom-color: #CCC;
-    padding: 0 6px;
+    padding: 2px 6px;
     float: none !important; /*For Opera*/
     float: left; /*For IE*/
     display: block;
     background: #EEE;
     color: #666;
-    font: bold 10px/22px Verdana, Arial, Helvetica, sans-serif;
     text-decoration: none;
     height: auto !important;
     height: 100%; /*For IE*/
@@ -138,7 +137,7 @@ ul#navmenu a {
 ul#navmenu a:hover,
 ul#navmenu li:hover a,
 ul#navmenu li.iehover a {
-    background: #CCC;
+    background: #3875d7;
     color: #FFF;
 }
 
@@ -155,7 +154,7 @@ ul#navmenu li:hover li a:hover,
 ul#navmenu li:hover li:hover a,
 ul#navmenu li.iehover li a:hover,
 ul#navmenu li.iehover li.iehover a {
-    background: #CCC;
+    background: #3875d7;
     color: #FFF;
 }
 
@@ -171,7 +170,7 @@ ul#navmenu li:hover li:hover li a:hover,
 ul#navmenu li:hover li:hover li:hover a,
 ul#navmenu li.iehover li.iehover li a:hover,
 ul#navmenu li.iehover li.iehover li.iehover a {
-    background: #CCC;
+    background: #3875d7;
     color: #FFF;
 }
 
@@ -185,7 +184,7 @@ ul#navmenu li.iehover li.iehover li.iehover li a {
 /* 4th Menu Hover */
 ul#navmenu li:hover li:hover li:hover li a:hover,
 ul#navmenu li.iehover li.iehover li.iehover li a:hover {
-    background: #CCC;
+    background: #3875d7;
     color: #FFF;
 }
 

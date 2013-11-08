@@ -44,20 +44,21 @@ function init() {
     });
 
     $('menu_new').addEvent('click', function(event) {
-        elementIterator = 0;
+        new MooDialog.Prompt('Level-Name: ', function(ret){
+            console.log(ret);
+        });
+        /*elementIterator = 0;
         editorJSON = {
 
         };
         stage.removeAllChildren();
         var gridCount = getWidth() / 10;
         grid = createBgGrid(gridCount, gridCount);
-        stage.addChild(grid);
-
+        stage.addChild(grid);*/
     });
 
     $('menu_save').addEvent('click', function(event) {
         save(this);
-
     });
 
     $('menu_load').addEvent('click', function(event) {
