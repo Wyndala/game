@@ -106,7 +106,7 @@ function onImageLoaded() {
     hero.x = start.x;
     hero.y = start.y;
 
-    var jsonRequest = new Request.JSON({url: 'levels/level0.json',
+    var jsonRequest = new Request.JSON({url: 'levels/level.json',
         onSuccess: function(responseJSON){
             loadLevel(responseJSON);
             stage.addChild(hero);
@@ -164,7 +164,7 @@ function executeFunctionByName(name) {
 
 function setStartPosition(x,y) {
     start.x = x;
-    start.y = y - 40;
+    start.y = y - 80;
 }
 
 function addPlatform(x,y) {

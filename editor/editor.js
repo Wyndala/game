@@ -15,8 +15,11 @@ var	stage,
     toolBox = null;
 
 function init() {
-    toolBox = new Window();
+    toolBox = new Window($$('.window')[0], {'handle': $$('.window .title')[0]});
 
+    toolBox.addEvent('clicked', function(obj) {
+        executeFunctionByName(obj.get('id'))();
+    });
 
     canvas = document.createElement('canvas');
     canvas.width = getWidth();
@@ -86,7 +89,13 @@ function init() {
                 reader.readAsBinaryString(f);
             }
 
-    })
+    });
+
+    $('menu_elements').addEvent('click', function(event) {
+        event.stop();
+        $('elements').toggleClass('active');
+        $('menu_elements').getElement('.window-icon').toggleClass('active');
+    });
 
     stage.on('stagemouseup', function(event) {
         if (actElement) {
@@ -134,6 +143,7 @@ function executeFunctionByName(name) {
         case 'coin': return addCoin;
         case 'box': return addBox;
         case 'start': return addStart;
+        case 'enemy': return addEnemy;
     }
 }
 
@@ -395,22 +405,6 @@ function undo() {
 
 document.addEvent('keydown', function(event) {
     switch(event.code) {
-        // Plattform
-        case 80:
-            addPlatform(0,0);
-            break;
-        case 67:
-            addCoin(0,0);
-            break;
-        case 66:
-            addBox(0,0);
-            break;
-        case 69:
-            addEnemy(0,0);
-            break;
-        case 77:
-            addStart(0,0);
-            break;
         case 37:
             moveStage({x: 20, y: 0});
             break;
@@ -442,8 +436,7 @@ var myKeyboardEvents = new Keyboard({
             undo();
         },
         'ctrl+s': function(event) {
-            console.log(event);
-            save();
+
         }
     },
     active: true

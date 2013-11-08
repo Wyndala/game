@@ -59,7 +59,7 @@
 
         stage.addChild(coin);
         createjs.Sound.play('coin');
-        this.gotoAndStop('inactive');
+        this.gotoAndPlay('inactive');
         collects++;
         hud.update();
     }

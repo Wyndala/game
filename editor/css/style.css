@@ -133,6 +133,13 @@ ul#navmenu a {
     height: 100%; /*For IE*/
 }
 
+ul#navmenu .window-icon {
+    visibility: hidden;
+}
+
+ul#navmenu .window-icon.active {
+    visibility: visible;
+}
 /* Root Menu Hover Persistence */
 ul#navmenu a:hover,
 ul#navmenu li:hover a,
@@ -220,16 +227,23 @@ ul#navmenu ul ul li.iehover ul {
     border-left:1px solid #fff;
     border-bottom:1px solid #999;
     border-right:1px solid #999;
+    display: none;
     position: absolute;
     right: 100px;
     top: 50px;
     width: 300px;
     height: 500px;
+    overflow: hidden;
+}
+
+.window.active {
+    display: block;
 }
 
 .window .title {
     background: #444;
     color: #fff;
+    cursor: move;
     padding: 5px;
     position: relative;
 }
@@ -249,6 +263,7 @@ ul#navmenu ul ul li.iehover ul {
     border-bottom: 1px solid #999;
     border-right: 1px solid #999;
     color: #444;
+    cursor: pointer;
     font-size: 12px;
     width: 15px;
     display: inline-block;
@@ -257,4 +272,15 @@ ul#navmenu ul ul li.iehover ul {
 
 .window ul {
     list-style: none;
+}
+
+.window ul li {
+    cursor: pointer;
+    padding: 10px;
+    text-align: center;
+}
+
+.window ul li:hover {
+    background: #ccc;
+    border: 2px inset #CCCCCC;
 }
