@@ -12,10 +12,12 @@ var	stage,
     },
     markerShape = null,
     lastElementTime = 0,
-    toolBox = null;
+    toolBox = null,
+    mouse = null;
 
 function init() {
     toolBox = new Window($$('.window')[0], {'handle': $$('.window .title')[0]});
+    mouse = new Mouse();
 
     toolBox.addEvent('clicked', function(obj) {
         executeFunctionByName(obj.get('id'))();
@@ -187,7 +189,7 @@ function addEnemy(x,y, platform) {
     x = Math.round(x);
     y = Math.round(y);
 
-    var enemy = new Enemy('assets/turtleSprite.png', platform);
+    var enemy = new Enemy('assets/AndroidSprite.png', platform);
     enemy.removeAllEventListeners();
     enemy.x = x;
     enemy.y = y;
@@ -284,7 +286,7 @@ function addElement() {
 }
 
 function addElementEvents(element) {
-    element.on('click', function(event) {
+    mouse.addEventByMode(element, 'normal', 'click', function(event) {
         if (event.timeStamp - 1000 > lastElementTime) {
             var x = event.rawX - (event.rawX % gridModulo) + gridModulo;
             var y = event.rawY - (event.rawY % gridModulo) + gridModulo;
@@ -296,23 +298,39 @@ function addElementEvents(element) {
                 resetContext();
             });
 
+            $('link').removeEvents();
+            $('link').addEvent('click', function() {
+                mouse.modes = {
+                    normal: false,
+                    link: true
+                }
+            });
+
             $('edit').removeEvents();
             $('edit').addEvent('click', function() {
                 actElement = element;
                 actElement.removeAllEventListeners();
             });
         }
-
     });
 
-    element.on('mouseover', function(event) {
-        var bounds = this.getBounds();
+    mouse.addEventByMode(element, 'link', 'click', function(event) {
+        if (event.timeStamp - 1000 > lastElementTime) {
+            var bounds = element.getBounds();
+            markerShape = new createjs.Shape();
+            markerShape.graphics.beginStroke("#3388BB").drawRect(element.x, element.y, bounds.width, bounds.height);
+            stage.addChild(markerShape);
+        }
+    });
+
+    mouse.addEventByMode(element, 'normal', 'mouseover', function(event) {
+        var bounds = element.getBounds();
         markerShape = new createjs.Shape();
-        markerShape.graphics.beginStroke("#ff0000").drawRect(this.x, this.y, bounds.width, bounds.height);
+        markerShape.graphics.beginStroke("#ff0000").drawRect(element.x, element.y, bounds.width, bounds.height);
         stage.addChild(markerShape);
     });
 
-    element.on('mouseout', function(event) {
+    mouse.addEventByMode(element, 'normal', 'mouseout', function(event) {
         if (markerShape) {
             stage.removeChild(markerShape);
             markerShape = null;

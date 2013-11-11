@@ -94,7 +94,6 @@ function calculateCollision(obj, direction, collideables, moveBy)
                 if ( collision.y < 0 && collideables[cc].currentAnimation != 'inactive') {
                     collideables[cc].activate();
                 } else if (collision.y < 0 && collideables[cc].currentAnimation == 'inactive') {
-                    console.log('test');
                     var instance = createjs.Sound.play('inactive');
                     instance.setVolume(0.1);
                 }
