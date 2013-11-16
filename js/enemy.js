@@ -34,7 +34,7 @@
         };
         var spriteSheet = new createjs.SpriteSheet(data);
         this._initialize(spriteSheet, "runRight");
-        this.name = 'Enemy';
+        this.name = 'enemy';
         this.snapToPixel = true;
         this.velocity = {x:2,y:0};
         this.on('tick', this.tick);
@@ -47,7 +47,8 @@
     Enemy.prototype.tick = function () {
         if (!this.killed) {
             var moveBy = {x:0, y:this.velocity.y};
-            if (this.x - this.platform.x < 0 || (this.platform.x + 225 - this.x) < -10) {
+            var plattformBounds = getBounds(this.platform) || {width: 0};
+            if (this.x - this.platform.x < 0 || (this.platform.x + plattformBounds.width - this.x) < 16) {
                 this.velocity.x = -this.velocity.x;
                 this.playAlternateDirectionAnimation();
             }

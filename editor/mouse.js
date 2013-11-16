@@ -10,7 +10,6 @@ Mouse = new Class({
     },
 
     addEventByMode: function(element, mode, event, fn) {
-        console.log(event);
         element.on(event, function(evt) {
             if (this.modes[mode] == true) {
                 fn(evt);

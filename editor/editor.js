@@ -4,6 +4,7 @@ var	stage,
     w = getWidth(),
     h = getHeight(),
     actElement = null,
+    markedElement = null,
     elementIterator = 0,
     gridModulo = 10,
     grid = null,
@@ -98,8 +99,18 @@ function init() {
         $('elements').toggleClass('active');
         $('menu_elements').getElement('.window-icon').toggleClass('active');
     });
+    mouse.addEventByMode(stage, 'normal', 'stagemouseup', function(event) {
+        if (actElement) {
+            lastElementTime = event.timeStamp;
+            addElement();
+        }
 
-    stage.on('stagemouseup', function(event) {
+        if (!markerShape) {
+            resetContext();
+        }
+    });
+
+    mouse.addEventByMode(stage, 'link', 'stagemouseup', function(event) {
         if (actElement) {
             lastElementTime = event.timeStamp;
             addElement();
@@ -126,6 +137,9 @@ function loadLevel(json) {
         addFunction(item.x, item.y);
         if (actElement) {
             addElement();
+            if (item.linked > -1) {
+                editorJSON[index].linked = item.linked;
+            }
         }
     });
 }
@@ -300,6 +314,7 @@ function addElementEvents(element) {
 
             $('link').removeEvents();
             $('link').addEvent('click', function() {
+                markedElement = element;
                 mouse.modes = {
                     normal: false,
                     link: true
@@ -316,10 +331,12 @@ function addElementEvents(element) {
 
     mouse.addEventByMode(element, 'link', 'click', function(event) {
         if (event.timeStamp - 1000 > lastElementTime) {
-            var bounds = element.getBounds();
-            markerShape = new createjs.Shape();
-            markerShape.graphics.beginStroke("#3388BB").drawRect(element.x, element.y, bounds.width, bounds.height);
-            stage.addChild(markerShape);
+            editorJSON[markedElement.JSONid].linked = element.JSONid;
+            markedElement = null;
+            mouse.modes = {
+                normal: true,
+                link: false
+            }
         }
     });
 
@@ -335,7 +352,20 @@ function addElementEvents(element) {
             stage.removeChild(markerShape);
             markerShape = null;
         }
+    });
 
+    mouse.addEventByMode(element, 'link', 'mouseover', function(event) {
+        var bounds = element.getBounds();
+        markerShape = new createjs.Shape();
+        markerShape.graphics.beginStroke("#123456").drawRect(element.x, element.y, bounds.width, bounds.height);
+        stage.addChild(markerShape);
+    });
+
+    mouse.addEventByMode(element, 'link', 'mouseout', function(event) {
+        if (markerShape) {
+            stage.removeChild(markerShape);
+            markerShape = null;
+        }
     });
 }
 

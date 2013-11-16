@@ -59,7 +59,8 @@ var	stage,
     collects = 0,
     life = 5,
     alternate = 1,
-    enemyCount = 10
+    enemyCount = 10,
+    stageObjectStack = []
 
 function init() {
     window.collideables = [];
@@ -117,6 +118,8 @@ function onImageLoaded() {
             hero.x = start.x;
             hero.y = start.y;
             stage.addChild(hud);
+            createjs.Ticker.setFPS(30);
+            createjs.Ticker.addEventListener('tick', tick);
         },
         onError: function(erro) {
             console.log('error');
@@ -140,24 +143,45 @@ function onImageLoaded() {
         // add the platform
         addPlatform(atX,atY);
     }*/
-    createjs.Ticker.setFPS(30);
-    createjs.Ticker.addEventListener('tick', tick);
+
 
 
 }
 
 function loadLevel(json) {
     Object.each(json, function(item, index) {
-        var addFunction = executeFunctionByName(item.name);
-        addFunction(item.x, item.y);
+        if (item.linked > -1) {
+            if (index < item.linked) {
+                var linkedObject = json[item.linked];
+                var preAddFunction = getFunctionByName(linkedObject.name);
+                var addFunction = getFunctionByName(item.name);
+
+
+                var stageObject = preAddFunction(linkedObject.x, linkedObject.y);
+
+                stageObjectStack[index] = addFunction(item.x, item.y, stageObject);
+            } else {
+
+                var addFunction = getFunctionByName(item.name);
+
+                var stageObject = stageObjectStack[item.linked];
+                stageObjectStack[index] = addFunction(item.x, item.y, stageObject);
+            }
+        } else {
+            var addFunction = getFunctionByName(item.name);
+            stageObjectStack[index] = addFunction(item.x, item.y);
+        }
+
     });
 }
 
-function executeFunctionByName(name) {
+function getFunctionByName(name) {
+
     switch (name) {
         case 'platform': return addPlatform;
         case 'coin': return addCoin;
         case 'box': return addBox;
+        case 'enemy': return addEnemy;
         case 'start': return setStartPosition;
     }
 }
@@ -178,6 +202,9 @@ function addPlatform(x,y) {
 
     stage.addChild(platform);
     window.collideables.push(platform);
+
+    return platform;
+
     /*addCoin(x+75, y - 28);
     addCoin(x+150, y - 28);
 
@@ -202,6 +229,8 @@ function addCoin(x,y) {
 
     stage.addChild(coin);
     window.collectables.push(coin);
+
+    return coin;
 }
 
 function addEnemy(x,y, platform) {
@@ -215,6 +244,8 @@ function addEnemy(x,y, platform) {
 
     stage.addChild(test);
     window.collideables.push(test);
+
+    return test;
 }
 
 function addBox(x,y) {
@@ -228,6 +259,8 @@ function addBox(x,y) {
 
     stage.addChild(box);
     window.collideables.push(box);
+
+    return box;
 }
 
 function addElevator(x,y) {
@@ -241,6 +274,8 @@ function addElevator(x,y) {
 
     stage.addChild(elevator);
     window.collideables.push(elevator);
+
+    return elevator;
 }
 
 // move the hero down by 1px

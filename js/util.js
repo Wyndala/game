@@ -109,7 +109,7 @@ function calculateCollision(obj, direction, collideables, moveBy)
                 hero.onElevator = false;
             }
 
-            if (collision && collideables[cc].name=="Enemy") {
+            if (collision && collideables[cc].name=="enemy") {
                 if (collision) {
                    // console.log(collision);
                 }
@@ -125,9 +125,9 @@ function calculateCollision(obj, direction, collideables, moveBy)
                     collision = null;
                 }
             }
-        } else if (obj.name == "Enemy") {
+        } else if (obj.name == "enemy") {
 
-            if (collision && collideables[cc].name=="Enemy") {
+            if (collision && collideables[cc].name=="enemy") {
                 collision = null;
             }
         }
