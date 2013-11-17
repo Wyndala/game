@@ -7,37 +7,11 @@
  */
 function getBounds(obj) {
     var bounds={x:Infinity,y:Infinity,width:0,height:0};
-    if ( obj instanceof createjs.Container ) {
-        var children = obj.children, l=children.length, cbounds, c;
-        for ( c = 0; c < l; c++ ) {
-            cbounds = getBounds(children[c]);
-            if ( cbounds.x < bounds.x ) bounds.x = cbounds.x;
-            if ( cbounds.y < bounds.y ) bounds.y = cbounds.y;
-            if ( cbounds.width >bounds.width ) bounds.width = cbounds.width;
-            if ( cbounds.height > bounds.height ) bounds.height = cbounds.height;
-        }
-    } else {
-        var gp,gp2,gp3,gp4,imgr;
-        if ( obj instanceof createjs.Bitmap ) {
-            imgr = obj.image;
-        } else if ( obj instanceof createjs.Sprite ) {
-            if ( obj.spriteSheet._frames && obj.spriteSheet._frames[obj.currentFrame] && obj.spriteSheet._frames[obj.currentFrame].image )
-                imgr = obj.spriteSheet.getFrame(obj.currentFrame).rect;
-            else
-                return bounds;
-        } else {
-            return bounds;
-        }
-
-        gp = obj.localToGlobal(0,0);
-        gp2 = obj.localToGlobal(imgr.width,imgr.height);
-        gp3 = obj.localToGlobal(imgr.width,0);
-        gp4 = obj.localToGlobal(0,imgr.height);
-
-        bounds.x = Math.min(Math.min(Math.min(gp.x,gp2.x),gp3.x),gp4.x);
-        bounds.y = Math.min(Math.min(Math.min(gp.y,gp2.y),gp3.y),gp4.y);
-        bounds.width = Math.max(Math.max(Math.max(gp.x,gp2.x),gp3.x),gp4.x) - bounds.x;
-        bounds.height = Math.max(Math.max(Math.max(gp.y,gp2.y),gp3.y),gp4.y) - bounds.y;
+    if (obj) {
+        bounds = obj.getBounds();
+        bounds.height--;
+        bounds.x = obj.x;
+        bounds.y = obj.y;
     }
 
     return bounds;

@@ -36,6 +36,16 @@
         this.lifeText.y = 30;
         this.lifeText.textBaseline = "alphabetic";
         this.addChild(this.lifeText);
+
+        this.fpsText = new createjs.Text('FPS: ' + createjs.Ticker.getMeasuredFPS());
+        this.fpsText.x = 0;
+        this.fpsText.y = 100;
+        this.fpsText.textBaseline = "alphabetic";
+        this.addChild(this.fpsText);
+
+        this.on('tick', function() {
+            this.fpsText.text = 'FPS: ' + createjs.Ticker.getMeasuredFPS();
+        })
     }
 
     Hud.prototype.update = function() {

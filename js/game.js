@@ -71,9 +71,18 @@ function init() {
     document.body.appendChild(canvas);
 
     stage = new createjs.Stage(canvas);
-    bg = new createjs.Bitmap('assets/bg.png');
-    bg.y = 500;
-    stage.addChild(bg);
+    sky = new createjs.Bitmap('assets/layer_sky.png');
+    sky.y = 0;
+
+    stage.addChild(sky);
+
+    clouds = new createjs.Bitmap('assets/layer_clouds.png');
+    clouds.y = 0;
+    stage.addChild(clouds);
+
+    houses = new createjs.Bitmap('assets/layer_far_houses.png');
+    houses.y = 0;
+    stage.addChild(houses);
 
     createjs.Sound.on('fileload', function(event) {
         if (event.id == 'theme') {
@@ -110,16 +119,19 @@ function onImageLoaded() {
     var jsonRequest = new Request.JSON({url: 'levels/level.json',
         onSuccess: function(responseJSON){
             loadLevel(responseJSON);
+
             stage.addChild(hero);
+
+            hero.x = start.x;
+            hero.y = start.y;
+
+            createjs.Ticker.setFPS(30);
+            createjs.Ticker.addEventListener('tick', tick);
             hud = new Hud();
 
             hud.x = 0;
             hud.y = 0;
-            hero.x = start.x;
-            hero.y = start.y;
             stage.addChild(hud);
-            createjs.Ticker.setFPS(30);
-            createjs.Ticker.addEventListener('tick', tick);
         },
         onError: function(erro) {
             console.log('error');
@@ -157,7 +169,7 @@ function loadLevel(json) {
                 var addFunction = getFunctionByName(item.name);
 
 
-                var stageObject = preAddFunction(linkedObject.x, linkedObject.y);
+                var stageObject = preAddFunction(linkedObject.x, linkedObject.y, linkedObject.options);
 
                 stageObjectStack[index] = addFunction(item.x, item.y, stageObject);
             } else {
@@ -169,7 +181,7 @@ function loadLevel(json) {
             }
         } else {
             var addFunction = getFunctionByName(item.name);
-            stageObjectStack[index] = addFunction(item.x, item.y);
+            stageObjectStack[index] = addFunction(item.x, item.y, item.options);
         }
 
     });
@@ -182,6 +194,7 @@ function getFunctionByName(name) {
         case 'coin': return addCoin;
         case 'box': return addBox;
         case 'enemy': return addEnemy;
+        case 'ground': return addGroundContainer;
         case 'start': return setStartPosition;
     }
 }
@@ -216,6 +229,24 @@ function addPlatform(x,y) {
         enemyCount--;
     //}*/
 
+}
+
+function addGroundContainer(x, y, options) {
+    x = Math.round(x);
+    y = Math.round(y);
+
+    var groundContainer = new GroundContainer(options);
+    groundContainer.x = x;
+    groundContainer.y = y;
+    groundContainer.snapToPixel = true;
+
+    stage.addChild(groundContainer);
+    window.collideables.push(groundContainer);
+    groundContainer.on('completeLoading', function() {
+        this.cache(0,0,this.options.width, this.options.height);
+    })
+
+    return groundContainer;
 }
 
 function addCoin(x,y) {
@@ -282,23 +313,27 @@ function addElevator(x,y) {
 // and update/render the stage
 function tick() {
     if (!hero.killed) {
-        if ( hero.x > getWidth()*.3 ) {
-            stage.x = -hero.x + getWidth()*.3;
+        if ( hero.x > getWidth()*.5 ) {
+            stage.x = -hero.x + getWidth()*.5;
         }
-        if ( hero.y > getHeight()*.4 ) {
+        if ( hero.y > getHeight()*.4  && -hero.y + getHeight()*.4 < 100) {
             stage.y = -hero.y + getHeight()*.4;
-        } else if ( hero.y < getHeight()*.3 ) {
-            stage.y = -hero.y + getHeight()*.3;
+        } else if ( hero.y <= getHeight()*.4) {
+            stage.y = -hero.y + getHeight()*.4;
         }
     }
     hud.x = -stage.x;
     hud.y = -stage.y;
 
-    bg.x = -stage.x;
-    //bg.y = -stage.y;
+    sky.x = -stage.x;
+    sky.y = -stage.y;
 
-    //background.x = (stage.x * .45) % (w/GRID_HORIZONTAL); // horizontal
-   // background.y = (stage.y * .45) % (h/GRID_VERTICAL);   // vertical
+    houses.x = -stage.x * 0.8;
+    houses.y = -stage.y * 0.8;
+
+    clouds.x = -stage.x * 0.9;
+    clouds.y = -stage.y * 0.9;
+
     hero.tick();
     stage.update();
 }

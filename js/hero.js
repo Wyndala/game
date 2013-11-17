@@ -53,6 +53,7 @@
         this.oldAnimation = "standRight";
         this.onElevator = false;
         this.instance = null;
+        this.deathY = 1000;
 
         this.walkSoundInstance = createjs.Sound.createInstance('walk');
         this.walkSoundInstance.setVolume(0.1);
@@ -87,14 +88,13 @@
                 this.onGround = true;
                 if (this.currentAnimation == 'jumpRight') this.playAnimation(this.oldAnimation);
                 if (this.currentAnimation == 'jumpLeft') this.playAnimation(this.oldAnimation);
-                this.deathY = this.y + 1000;
             }
             this.velocity.y = 0;
         }
 
         if (this.y > this.deathY && !this.killed) {
             this.kill();
-        } else if (this.y > this.deathY && this.killed) {
+        } else if (this.y > this.deathY + 500 && this.killed) {
             reset();
         }
         // and now handle the x-movement

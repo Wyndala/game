@@ -14,6 +14,8 @@ var	stage,
     markerShape = null,
     lastElementTime = 0,
     toolBox = null,
+    tileStart = null,
+    highlightShape = new createjs.Shape(),
     mouse = null;
 
 function init() {
@@ -30,7 +32,7 @@ function init() {
     document.body.appendChild(canvas);
     stage = new createjs.Stage(canvas);
     stage.enableMouseOver(10);
-    stage.on('stagemousemove', function(event) {
+    mouse.addEventByMode(stage, 'normal', 'stagemousemove', function(event) {
         if (actElement) {
             actElement.alpha = 0.8;
             var correctedX = event.stageX - stage.x;
@@ -39,17 +41,25 @@ function init() {
             actElement.x = correctedX - (correctedX % gridModulo);
             actElement.y = correctedY - (correctedY % gridModulo);
         } else {
-            /*if (event.rawX < 40) {
-                moveStage({x: 10, y: 0});
-            } else if (event.rawX > window.getSize().x - 40) {
-                moveStage({x: -10, y: 0});
-            }
 
-            if (event.rawY < 40) {
-                moveStage({x: 0, y: 10});
-            } else if (event.rawY > window.getSize().y - 40) {
-                moveStage({x: 0, y: -10});
-            }*/
+        }
+    });
+
+    mouse.addEventByMode(stage, 'tile', 'stagemousemove', function(event) {
+        var x = event.rawX - (event.rawX % gridModulo);
+        var y = event.rawY - (event.rawY % gridModulo);
+        if (tileStart) {
+            stage.removeChild(markerShape);
+            markerShape = new createjs.Shape();
+            markerShape.graphics.beginStroke("#00f600").drawRect(tileStart.x, tileStart.y, x - tileStart.x, y - tileStart.y);
+            stage.addChild(markerShape);
+        } else {
+            var x = event.rawX - (event.rawX % gridModulo);
+            var y = event.rawY - (event.rawY % gridModulo);
+            stage.removeChild(highlightShape);
+            highlightShape = new createjs.Shape();
+            highlightShape.graphics.beginFill("#00f600").drawRect(x, y, gridModulo, gridModulo);
+            stage.addChild(highlightShape);
         }
     });
 
@@ -111,13 +121,35 @@ function init() {
     });
 
     mouse.addEventByMode(stage, 'link', 'stagemouseup', function(event) {
-        if (actElement) {
-            lastElementTime = event.timeStamp;
-            addElement();
-        }
-
         if (!markerShape) {
-            resetContext();
+            mouse.setMouseMode('normal');
+        }
+    });
+
+    mouse.addEventByMode(stage, 'tile', 'stagemouseup', function(event) {
+        var x = event.rawX - (event.rawX % gridModulo);
+        var y = event.rawY - (event.rawY % gridModulo);
+        if (tileStart) {
+            var options = {
+                width: (x - tileStart.x),
+                height: (y - tileStart.y),
+                style: 'fullRect'
+            }
+
+            addGroundContainer(tileStart.x, tileStart.y, options);
+            var tempIterator = elementIterator;
+            addElement();
+            editorJSON[tempIterator].options = options;
+            mouse.setMouseMode('normal');
+            tileStart = null;
+            stage.removeChild(markerShape);
+            stage.removeChild(highlightShape);
+            markerShape = null;
+        } else {
+            tileStart = {
+                x: x,
+                y: y
+            }
         }
     });
 
@@ -160,7 +192,12 @@ function executeFunctionByName(name) {
         case 'box': return addBox;
         case 'start': return addStart;
         case 'enemy': return addEnemy;
+        case 'ground': return initTilePlacement;
     }
+}
+
+function initTilePlacement(x,y) {
+    mouse.setMouseMode('tile');
 }
 
 function addPlatform(x,y) {
@@ -179,6 +216,24 @@ function addPlatform(x,y) {
         stage.removeChild(actElement);
     }
     actElement = platform;
+}
+
+function addGroundContainer(x, y, options) {
+    x = Math.round(x);
+    y = Math.round(y);
+
+    var groundContainer = new GroundContainer(options);
+    groundContainer.x = x;
+    groundContainer.y = y;
+    groundContainer.snapToPixel = true;
+
+    stage.addChild(groundContainer);
+
+    if (actElement != null) {
+        stage.removeChild(actElement);
+    }
+
+    actElement = groundContainer;
 }
 
 function addCoin(x,y) {
@@ -315,10 +370,7 @@ function addElementEvents(element) {
             $('link').removeEvents();
             $('link').addEvent('click', function() {
                 markedElement = element;
-                mouse.modes = {
-                    normal: false,
-                    link: true
-                }
+                mouse.setMouseMode('link');
             });
 
             $('edit').removeEvents();
@@ -333,10 +385,7 @@ function addElementEvents(element) {
         if (event.timeStamp - 1000 > lastElementTime) {
             editorJSON[markedElement.JSONid].linked = element.JSONid;
             markedElement = null;
-            mouse.modes = {
-                normal: true,
-                link: false
-            }
+            mouse.setMouseMode('normal');
         }
     });
 
