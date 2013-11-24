@@ -1,21 +1,21 @@
 (function (window) {
-    function GroundTile(direction) {
+    function PlatformTile(direction) {
         this.initialize(direction);
     }
 
-    GroundTile.prototype = new createjs.Sprite();
+    PlatformTile.prototype = new createjs.Sprite();
 
     // save the original initialize-method so it won't be gone after
     // overwriting it
-    GroundTile.prototype._initialize = GroundTile.prototype.initialize;
+    PlatformTile.prototype._initialize = PlatformTile.prototype.initialize;
 
     // initialize the object
-    GroundTile.prototype.initialize = function (direction) {
+    PlatformTile.prototype.initialize = function (direction) {
         var data = {
-            images: ['assets/groundTilesBig.png'],
+            images: ['assets/platformTile.png'],
             frames: {
-                width:50,
-                height:50
+                width:110,
+                height:25
             },
             animations: {
                 leftUp: [0],
@@ -24,9 +24,9 @@
                 left: [3],
                 middle: [4],
                 right: [5],
-                leftDown: [6],
-                Down: [7],
-                rightDown: [8]
+                leftDown: [3],
+                Down: [4],
+                rightDown: [5]
             }
         };
         var spriteSheet = new createjs.SpriteSheet(data);
@@ -42,9 +42,9 @@
 
         this._initialize(spriteSheet, direction);
         this.stop();
-        this.name = 'GroundTile';
+        this.name = 'PlatformTile';
         this.snapToPixel = true;
     }
 
-    window.GroundTile = GroundTile;
+    window.PlatformTile = PlatformTile;
 } (window));

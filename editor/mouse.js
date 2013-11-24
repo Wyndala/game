@@ -3,7 +3,8 @@ Mouse = new Class({
     modes: {
         normal: true,
         link: false,
-        tile: false
+        tile: false,
+        elevator: false
     },
 
     initialize: function() {

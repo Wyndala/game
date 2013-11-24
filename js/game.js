@@ -9,15 +9,19 @@ if ('ontouchstart' in document.documentElement) {
     document.addEvent('keydown', function(event) {
         switch(event.code) {
             case 37:
-                hero.velocity.x = -10;
-                if (hero.currentAnimation != 'runLeft') {
-                    hero.playAnimation('runLeft');
+                if (!hero.killed) {
+                    hero.velocity.x = -10;
+                    if (hero.currentAnimation != 'runLeft') {
+                        hero.playAnimation('runLeft');
+                    }
                 }
                 break;
             case 39:
-                hero.velocity.x = 10;
-                if (hero.currentAnimation != 'runRight') {
-                    hero.playAnimation('runRight');
+                if (!hero.killed) {
+                    hero.velocity.x = 10;
+                    if (hero.currentAnimation != 'runRight') {
+                        hero.playAnimation('runRight');
+                    }
                 }
                 break;
             case 38:
@@ -80,9 +84,19 @@ function init() {
     clouds.y = 0;
     stage.addChild(clouds);
 
+    lessFarHouses = new createjs.Bitmap('assets/layer_less_far_houses.png');
+    lessFarHouses.y = -150;
+    stage.addChild(lessFarHouses);
+
     houses = new createjs.Bitmap('assets/layer_far_houses.png');
-    houses.y = 0;
+    houses.y = -150;
     stage.addChild(houses);
+
+    nearHouses = new createjs.Bitmap('assets/layer_near_houses.png');
+    nearHouses.y = -150;
+    stage.addChild(nearHouses);
+
+
 
     createjs.Sound.on('fileload', function(event) {
         if (event.id == 'theme') {
@@ -121,7 +135,6 @@ function onImageLoaded() {
             loadLevel(responseJSON);
 
             stage.addChild(hero);
-
             hero.x = start.x;
             hero.y = start.y;
 
@@ -195,7 +208,9 @@ function getFunctionByName(name) {
         case 'box': return addBox;
         case 'enemy': return addEnemy;
         case 'ground': return addGroundContainer;
+        case 'platformContainer': return addPlatformContainer;
         case 'start': return setStartPosition;
+        case 'elevator': return addElevator;
     }
 }
 
@@ -249,6 +264,25 @@ function addGroundContainer(x, y, options) {
     return groundContainer;
 }
 
+function addPlatformContainer(x, y, options) {
+    x = Math.round(x);
+    y = Math.round(y);
+
+    var platformContainer = new PlatformContainer(options);
+    platformContainer.x = x;
+    platformContainer.y = y;
+    platformContainer.snapToPixel = true;
+
+    stage.addChild(platformContainer);
+    window.collideables.push(platformContainer);
+    platformContainer.on('completeLoading', function() {
+        this.cache(0,0,this.options.width, this.options.height);
+    })
+
+    return platformContainer;
+}
+
+
 function addCoin(x,y) {
     x = Math.round(x);
     y = Math.round(y);
@@ -294,11 +328,10 @@ function addBox(x,y) {
     return box;
 }
 
-function addElevator(x,y) {
+function addElevator(x,y, options) {
     x = Math.round(x);
     y = Math.round(y);
-    alternate = -alternate;
-    var elevator = new Elevator('assets/elevator.png', {maxY: y + 200, minY: y - 200}, alternate);
+    var elevator = new Elevator('assets/elevatorSprite.png', {maxY: options.maxY, minY: options.minY});
     elevator.x = x;
     elevator.y = y;
     elevator.snapToPixel = true;
@@ -316,9 +349,10 @@ function tick() {
         if ( hero.x > getWidth()*.5 ) {
             stage.x = -hero.x + getWidth()*.5;
         }
-        if ( hero.y > getHeight()*.4  && -hero.y + getHeight()*.4 < 100) {
-            stage.y = -hero.y + getHeight()*.4;
-        } else if ( hero.y <= getHeight()*.4) {
+
+        if ( hero.y +stage.y > getHeight() * .4  && stage.y > getHeight()-getVisibleHeight()) {
+            stage.y = Math.round(Number(-hero.y + getHeight()*.4).limit(getHeight()-getVisibleHeight(), (-hero.y + getHeight()*.4)));
+        } else if ( hero.y +stage.y <= getHeight() * .4) {
             stage.y = -hero.y + getHeight()*.4;
         }
     }
@@ -328,11 +362,17 @@ function tick() {
     sky.x = -stage.x;
     sky.y = -stage.y;
 
-    houses.x = -stage.x * 0.8;
-    houses.y = -stage.y * 0.8;
+    houses.x = -stage.x * 0.7;
+    houses.y = -stage.y * 0.7;
+
+    lessFarHouses.x = -stage.x * 0.85;
+    lessFarHouses.y = -stage.y * 0.85;
 
     clouds.x = -stage.x * 0.9;
     clouds.y = -stage.y * 0.9;
+
+    nearHouses.x = -stage.x * 0.4;
+    nearHouses.y = -stage.y * 0.5 - 150;
 
     hero.tick();
     stage.update();
@@ -344,6 +384,10 @@ function getWidth() {
 
 function getHeight() {
     return window.getSize().y;
+}
+
+function getVisibleHeight() {
+    return 900;
 }
 
 // whenever a key is pressed then hero's

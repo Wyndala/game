@@ -272,6 +272,8 @@ ul#navmenu ul ul li.iehover ul {
 
 .window ul {
     list-style: none;
+    overflow: auto;
+    height: 470px;
 }
 
 .window ul li {
@@ -283,4 +285,8 @@ ul#navmenu ul ul li.iehover ul {
 .window ul li:hover {
     background: #ccc;
     border: 2px inset #CCCCCC;
+}
+
+.window ul li img {
+    max-width: 200px;
 }

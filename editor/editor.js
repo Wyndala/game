@@ -6,7 +6,7 @@ var	stage,
     actElement = null,
     markedElement = null,
     elementIterator = 0,
-    gridModulo = 10,
+    gridModulo = 5,
     grid = null,
     editorJSON = {
 
@@ -16,6 +16,7 @@ var	stage,
     toolBox = null,
     tileStart = null,
     highlightShape = new createjs.Shape(),
+    elementName = '',
     mouse = null;
 
 function init() {
@@ -35,27 +36,42 @@ function init() {
     mouse.addEventByMode(stage, 'normal', 'stagemousemove', function(event) {
         if (actElement) {
             actElement.alpha = 0.8;
-            var correctedX = event.stageX - stage.x;
-            var correctedY = event.stageY - stage.y;
+            var eventCoordinates = getCorrectedEventCoordinates(event);
 
-            actElement.x = correctedX - (correctedX % gridModulo);
-            actElement.y = correctedY - (correctedY % gridModulo);
+            actElement.x = eventCoordinates.x - (eventCoordinates.x % gridModulo);
+            actElement.y = eventCoordinates.y - (eventCoordinates.y % gridModulo);
         } else {
 
         }
     });
 
     mouse.addEventByMode(stage, 'tile', 'stagemousemove', function(event) {
-        var x = event.rawX - (event.rawX % gridModulo);
-        var y = event.rawY - (event.rawY % gridModulo);
+        var eventCoordinates = getCorrectedEventCoordinates(event);
+        var x = eventCoordinates.x;
+        var y = eventCoordinates.y;
         if (tileStart) {
             stage.removeChild(markerShape);
             markerShape = new createjs.Shape();
             markerShape.graphics.beginStroke("#00f600").drawRect(tileStart.x, tileStart.y, x - tileStart.x, y - tileStart.y);
             stage.addChild(markerShape);
         } else {
-            var x = event.rawX - (event.rawX % gridModulo);
-            var y = event.rawY - (event.rawY % gridModulo);
+            stage.removeChild(highlightShape);
+            highlightShape = new createjs.Shape();
+            highlightShape.graphics.beginFill("#00f600").drawRect(x, y, gridModulo, gridModulo);
+            stage.addChild(highlightShape);
+        }
+    });
+
+    mouse.addEventByMode(stage, 'elevator', 'stagemousemove', function(event) {
+        var eventCoordinates = getCorrectedEventCoordinates(event);
+        var x = eventCoordinates.x;
+        var y = eventCoordinates.y;
+        if (tileStart) {
+            stage.removeChild(markerShape);
+            markerShape = new createjs.Shape();
+            markerShape.graphics.beginStroke("#00f600").drawRect(tileStart.x, tileStart.y, x - tileStart.x, y - tileStart.y);
+            stage.addChild(markerShape);
+        } else {
             stage.removeChild(highlightShape);
             highlightShape = new createjs.Shape();
             highlightShape.graphics.beginFill("#00f600").drawRect(x, y, gridModulo, gridModulo);
@@ -127,16 +143,44 @@ function init() {
     });
 
     mouse.addEventByMode(stage, 'tile', 'stagemouseup', function(event) {
-        var x = event.rawX - (event.rawX % gridModulo);
-        var y = event.rawY - (event.rawY % gridModulo);
+        var eventCoordinates = getCorrectedEventCoordinates(event);
+        var x = eventCoordinates.x;
+        var y = eventCoordinates.y;
         if (tileStart) {
             var options = {
                 width: (x - tileStart.x),
                 height: (y - tileStart.y),
                 style: 'fullRect'
             }
+            var tileAddFunction = executeFunctionByName(elementName, 1);
+            tileAddFunction(tileStart.x, tileStart.y, options);
+            var tempIterator = elementIterator;
+            addElement();
+            editorJSON[tempIterator].options = options;
+            mouse.setMouseMode('normal');
+            tileStart = null;
+            stage.removeChild(markerShape);
+            stage.removeChild(highlightShape);
+            markerShape = null;
+        } else {
+            tileStart = {
+                x: x,
+                y: y
+            }
+        }
+    });
 
-            addGroundContainer(tileStart.x, tileStart.y, options);
+    mouse.addEventByMode(stage, 'elevator', 'stagemouseup', function(event) {
+        var eventCoordinates = getCorrectedEventCoordinates(event);
+        var x = eventCoordinates.x;
+        var y = eventCoordinates.y;
+        if (tileStart) {
+            var options = {
+                minY: tileStart.y,
+                maxY: y
+            }
+
+            addElevator(tileStart.x, tileStart.y, options);
             var tempIterator = elementIterator;
             addElement();
             editorJSON[tempIterator].options = options;
@@ -155,22 +199,26 @@ function init() {
 
     //bg = new createjs.Bitmap('assets/bg_editor.png');
     //stage.addChild(bg);
-    var gridCount = getWidth() / 10;
+    var gridCount = getWidth() / gridModulo;
     grid = createBgGrid(gridCount, gridCount);
     stage.addChild(grid);
 
-    createjs.Ticker.setFPS(5);
+    createjs.Ticker.setFPS(30);
     createjs.Ticker.addEventListener('tick', tick);
 }
 
 function loadLevel(json) {
     Object.each(json, function(item, index) {
-        var addFunction = executeFunctionByName(item.name);
-        addFunction(item.x, item.y);
+        var addFunction = executeFunctionByName(item.name, 1);
+        addFunction(item.x, item.y, item.options);
         if (actElement) {
+            var tempIterator = elementIterator;
             addElement();
+            if (item.options) {
+                editorJSON[tempIterator].options = item.options;
+            }
             if (item.linked > -1) {
-                editorJSON[index].linked = item.linked;
+                editorJSON[tempIterator].linked = item.linked;
             }
         }
     });
@@ -185,19 +233,43 @@ function save(thisContext) {
     thisContext.set('href',url);
 }
 
-function executeFunctionByName(name) {
+function executeFunctionByName(name, loading) {
     switch (name) {
         case 'platform': return addPlatform;
         case 'coin': return addCoin;
         case 'box': return addBox;
         case 'start': return addStart;
         case 'enemy': return addEnemy;
-        case 'ground': return initTilePlacement;
+        case 'ground': {
+            if (loading) {
+                return addGroundContainer;
+            }
+            elementName = 'ground';
+            return initTilePlacement;
+        }
+        case 'elevator': {
+            if (loading) {
+                return addElevator;
+            }
+
+            return initElevatorPlacement;
+        }
+        case 'platformContainer': {
+            if (loading) {
+                return addPlatformContainer;
+            }
+            elementName = 'platformContainer';
+            return initTilePlacement;
+        }
     }
 }
 
 function initTilePlacement(x,y) {
     mouse.setMouseMode('tile');
+}
+
+function initElevatorPlacement(x,y) {
+    mouse.setMouseMode('elevator');
 }
 
 function addPlatform(x,y) {
@@ -234,6 +306,24 @@ function addGroundContainer(x, y, options) {
     }
 
     actElement = groundContainer;
+}
+
+function addPlatformContainer(x, y, options) {
+    x = Math.round(x);
+    y = Math.round(y);
+
+    var platformContainer = new PlatformContainer(options);
+    platformContainer.x = x;
+    platformContainer.y = y;
+    platformContainer.snapToPixel = true;
+
+    stage.addChild(platformContainer);
+
+    if (actElement != null) {
+        stage.removeChild(actElement);
+    }
+
+    actElement = platformContainer;
 }
 
 function addCoin(x,y) {
@@ -307,16 +397,20 @@ function addStart(x,y) {
     actElement = mario;
 }
 
-function addElevator(x,y) {
+function addElevator(x,y, options) {
     x = Math.round(x);
     y = Math.round(y);
-    alternate = -alternate;
-    var elevator = new Elevator('assets/elevator.png', {maxY: y + 200, minY: y - 200}, alternate);
+    var elevator = new Elevator('assets/elevatorSprite.png', {maxY: options.maxY, minY: options.minY});
     elevator.x = x;
     elevator.y = y;
     elevator.snapToPixel = true;
+    elevator.name = 'elevator';
 
     stage.addChild(elevator);
+    if (actElement != null) {
+        stage.removeChild(actElement);
+    }
+    actElement = elevator;
 }
 
 function tick() {
@@ -378,6 +472,23 @@ function addElementEvents(element) {
                 actElement = element;
                 actElement.removeAllEventListeners();
             });
+
+            $('forground').removeEvents();
+            $('forground').addEvent('click', function() {
+                var newJsonId = stage.children[stage.children.length - 1].JSONid;
+                var oldJsonId = element.JSONid;
+
+                element.JSONid = newJsonId;
+                stage.children[stage.children.length - 1].JSONid = oldJsonId;
+
+                var newJsonObject = editorJSON[newJsonId];
+                var oldJsonObject = editorJSON[oldJsonId];
+
+                editorJSON[newJsonId] = oldJsonObject;
+                editorJSON[oldJsonId] = newJsonObject;
+
+                stage.swapChildren(element, stage.children[stage.children.length - 1]);
+            });
         }
     });
 
@@ -426,6 +537,8 @@ function resetContext() {
 }
 
 function removeElement(element) {
+    correctJsonIds(element.JSONid);
+
     stage.removeChild(element);
     elementIterator--;
     delete editorJSON[element.JSONid];
@@ -441,6 +554,19 @@ function correctObjectKeys(editorJSON) {
     return newObject;
 }
 
+function correctJsonIds(deletedId) {
+    var reachedDeletedId = false;
+    stage.children.each(function(item, index) {
+        if (reachedDeletedId) {
+            item.JSONid = item.JSONid - 1;
+        }
+
+        if (item.JSONid == deletedId) {
+            reachedDeletedId = true;
+        }
+    });
+}
+
 function createBgGrid(numX, numY) {
     var grid = new createjs.Container();
     grid.snapToPixel = true;
@@ -451,7 +577,7 @@ function createBgGrid(numX, numY) {
     // drawing the vertical line
     var verticalLine = new createjs.Graphics();
     verticalLine.beginFill(createjs.Graphics.getRGB(0, 0, 0));
-    verticalLine.drawRect(0,0,gw * 0.02,gh*(numY+2));
+    verticalLine.drawRect(0,0,gw * 0.03,gh*(numY+2));
     var vs;
     // placing the vertical lines:
     // we're placing 1 more than requested
@@ -466,7 +592,7 @@ function createBgGrid(numX, numY) {
     // drawing a horizontal line
     var horizontalLine = new createjs.Graphics();
     horizontalLine.beginFill(createjs.Graphics.getRGB(0, 0, 0));
-    horizontalLine.drawRect(0,0,gw*(numX+1),gh * 0.02);
+    horizontalLine.drawRect(0,0,gw*(numX+1),gh * 0.03);
     var hs;
     // placing the horizontal lines:
     // we're placing 1 more than requested
@@ -498,6 +624,12 @@ function undo() {
         elementIterator--;
         delete editorJSON[elementIterator];
     }
+}
+
+function getCorrectedEventCoordinates(event) {
+    var correctedX = event.stageX - stage.x;
+    var correctedY = event.stageY - stage.y;
+    return {x: correctedX - (correctedX % gridModulo), y: correctedY - (correctedY % gridModulo)};
 }
 
 document.addEvent('keydown', function(event) {

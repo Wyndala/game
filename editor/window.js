@@ -27,7 +27,6 @@ Window = new Class({
         }.bind(this));
         var self = this;
         this.element.getElements('li').addEvent('click', function(event) {
-            console.log('click');
             self.fireEvent('clicked', this);
         });
     }

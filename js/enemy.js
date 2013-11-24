@@ -40,6 +40,8 @@
         this.on('tick', this.tick);
         this.killed = false;
         this.platform = platform;
+        this.scaleX = 1.2;
+        this.scaleY = 1.2;
 
     }
 

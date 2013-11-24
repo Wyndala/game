@@ -32,8 +32,8 @@
                 },
                 standRight: [2],
                 standLeft: [1],
-                crouchRight: [9],
-                crouchLeft: [8],
+                crouchRight: [7],
+                crouchLeft: [6],
                 dead: {
                     frames: [10, 13],
                     speed: 0.2
@@ -53,7 +53,7 @@
         this.oldAnimation = "standRight";
         this.onElevator = false;
         this.instance = null;
-        this.deathY = 1000;
+        this.deathY = 900;
 
         this.walkSoundInstance = createjs.Sound.createInstance('walk');
         this.walkSoundInstance.setVolume(0.1);
@@ -101,7 +101,7 @@
         moveBy = {x:this.velocity.x, y:0};
         collision = calculateCollision(this, 'x', collideables, moveBy);
         collect = calculateCollisionWithCollectables(this,collectables, moveBy);
-        if (collect.length) {
+        if (collect.length && !this.killed) {
             for (var i = 0; i < collect.length; i++) {
                 var collectableIndex = collect[i];
                 var collectable = collectables[collectableIndex];
@@ -113,7 +113,6 @@
         this.x += moveBy.x;
 
         if ((moveBy.x > 0 || moveBy.x < 0) && (this.onGround || this.onElevator)) {
-           // console.log(this.walkSoundInstance.getPosition);
             if (!this.walkSoundInstance.getPosition()) {
                 this.walkSoundInstance.play();
             }
@@ -124,7 +123,7 @@
         // if the hero is "on the ground"
         // let him jump, physically correct!
         if ( this.onGround ) {
-            this.velocity.y = -17;
+            this.velocity.y = -16;
             this.onGround = false;
             this.doubleJump = true;
 
@@ -145,23 +144,23 @@
     }
 
     Hero.prototype.crouch = function() {
-        if (this.currentAnimation == 'jumpRight' ||
-            this.currentAnimation == 'standRight' ||
+        if (this.currentAnimation == 'standRight' ||
                 this.currentAnimation == 'runRight'
             ) {
-            this.playAnimation('rotate');
+            this.playAnimation('crouchRight');
         }
-        if (this.currentAnimation == 'jumpLeft' ||
-            this.currentAnimation == 'standLeft' ||
+        if (this.currentAnimation == 'standLeft' ||
                 this.currentAnimation == 'runLeft'
             ) {
-            this.playAnimation('rotate');
+            this.playAnimation('crouchLeft');
         }
     }
 
     Hero.prototype.playAnimation = function(animation) {
-        this.oldAnimation = this.currentAnimation;
-        this.gotoAndPlay(animation);
+        if (!this.killed) {
+            this.oldAnimation = this.currentAnimation;
+            this.gotoAndPlay(animation);
+        }
     }
 
     Hero.prototype.kill = function () {

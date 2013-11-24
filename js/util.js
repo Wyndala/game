@@ -7,11 +7,12 @@
  */
 function getBounds(obj) {
     var bounds={x:Infinity,y:Infinity,width:0,height:0};
-    if (obj) {
+    if (obj && obj.getBounds()) {
         bounds = obj.getBounds();
         bounds.height--;
         bounds.x = obj.x;
         bounds.y = obj.y;
+
     }
 
     return bounds;
@@ -73,7 +74,7 @@ function calculateCollision(obj, direction, collideables, moveBy)
                 }
             }
 
-            if (collision && collideables[cc].name=="Elevator") {
+            if (collision && collideables[cc].name=="elevator") {
                 if ( collision.y > 0) {
                     hero.onElevator = true;
                 } else {
